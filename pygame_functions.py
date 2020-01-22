@@ -652,8 +652,11 @@ def showLabel(labelName):
 
 
 def hideLabel(labelName):
+    print(labelName)
     textboxGroup.remove(labelName)
+    print('remove')
     if screenRefresh:
+        print('ds')
         updateDisplay()
 
 
@@ -742,22 +745,29 @@ def acaoAtaqueImg(img,local):
     time.sleep(1)
 
 
+
 def carregaMapa(mapa):
     print('carrega mapa')
-    c = loadImage("Map/pedra.png")
-    grama = loadImage("Map/pedra2.png")
-    ini = loadImage("Map/inimigo1.png")
-    eu = loadImage("Map/deuida.png")
+    pedra = loadImage("Map/pedra.png")
+    pedraSelecionado = loadImage("Map/pedraSelecionado.png")
+    pedra2 = loadImage("Map/pedra2.png")
+    esqueleto = loadImage("Map/inimigo1.png")
+    druida = loadImage("Map/deuida.png")
     for x in range(len(mapa)):
         for y in range(len(mapa[x])):
             if mapa[x][y] == 0 or type(mapa[x][y]) == Monster.Monster or type(mapa[x][y]) == Player.Player:
-                carregaImagem(c,(x*64,y*64))
+                carregaImagem(pedra,(x*64,y*64))
             if mapa[x][y] == 1:
-                carregaImagem(grama,(x*64,y*64))
+                carregaImagem(pedra2,(x*64,y*64))
             if type(mapa[x][y]) == Monster.Monster:
-                carregaImagem(ini,(x*64,y*64))
+                carregaImagem(esqueleto,(x*64,y*64))
             if  type(mapa[x][y]) == Player.Player:
-                carregaImagem(eu,(x*64,y*64))
+
+                carregaImagem(druida,(x*64,y*64))
+
+
+
+
 if __name__ == "__main__":
     print(""""pygame_functions is not designed to be run directly.
     See the wiki at https://github.com/StevePaget/Pygame_Functions/wiki/Getting-Started for more information""")

@@ -1,7 +1,8 @@
 from pygame_functions import *
 from Map.Map import *
 import pygame
-screenSize(640,640)
+
+screenSize(640, 850)
 setAutoUpdate(False)
 
 #
@@ -12,13 +13,18 @@ setAutoUpdate(False)
 
 nextFrame = clock()
 chao = loadImage("Map/chao1.png")
-frame=0
+frame = 0
 
 from Player import *
 from listaArmas import *
 from Map.Map import *
 from Monster import *
-
+MovimentarText = makeLabel("MOVIMENTAR", 35, 55, 670, "white")
+AtaqueText = makeLabel("ATAQUE", 40, 90, 740, "white")
+PassaVezText = makeLabel("Passa vez", 40, 350, 670, "white")
+setar = loadImage('Map/direcionalSeta.png')
+def limpaMenu():
+    drawRect(0, 640, 640, 300, (60, 60, 60))
 
 def gameInit(jogadores: list, Inimigos=[]):
     """
@@ -27,7 +33,6 @@ def gameInit(jogadores: list, Inimigos=[]):
     """
     locaisIniciaisJ = []
     locaisIniciaisI = []
-
 
     for coluna in range(len(Map1)):
         for item in range(len(Map1[coluna])):
@@ -46,61 +51,139 @@ def gameInit(jogadores: list, Inimigos=[]):
             Map1[y][x] = Inimigos[c]
 
 
+def printMenuAcoes(MovimentarText,AtaqueText,PassaVezText):
+    limpaMenu()
+    drawRect(50, 660, 250, 60, (80, 80, 80))
+    drawRect(50, 730, 250, 60, (80, 80, 80))
+    drawRect(75 + 250, 660, 250, 60, (80, 80, 80))
+    drawRect(75 + 250, 730, 250, 60, (80, 80, 80))
+    showLabel(MovimentarText)
+    showLabel(AtaqueText)
+    showLabel(PassaVezText)
+    updateDisplay()
+    time.sleep(0.5)
+    while True:
+        if mousePressed():
+            x = mouseX()
+            y = mouseY()
+            if 50 < x < 300 and 660 < y < 715:
+                hideLabel(MovimentarText)
+                hideLabel(AtaqueText)
+                hideLabel(PassaVezText)
+                return 1
+            elif 50 < x < 300 and 730 < y < 790:
+                hideLabel(MovimentarText)
+                hideLabel(AtaqueText)
+                hideLabel(PassaVezText)
+                return 2
+            elif 330 < x < 570 and 660 < y < 715:
+                hideLabel(MovimentarText)
+                hideLabel(AtaqueText)
+                hideLabel(PassaVezText)
+                return 0
+            else:
+                return 3
+def ataque(jogador,mapa,listaInimigos):
+    jogador.atualizaPosAtual(mapa)
+    inimigo: Player
+    for inimigo in listaInimigos:
+        inimigo.atualizaPosAtual(mapa)
+        print(inimigo.nome)
+    x = input('Quem?').lower()
+    for inimigo in listaInimigos:
+        if x == inimigo.nome.lower():
+            if jogador.ataca(inimigo) != 0:
+                acaoAtaqueImg(loadImage("Map/corte.png"), inimigo.posAtual)
+                jogador.acoes -= 1
+            else:
+                if inimigo.verificaVivo() == 0:
+                    acaoAtaqueImg(loadImage("Map/corte.png"), inimigo.posAtual)
+                    updateDisplay()
+                    tick(120)
+                    return 0
+    updateDisplay()
+    tick(120)
 
-def jogada(jogador: Player, listaInimigos: list, mapa):
+def quadradosPossiveis(jogador,mapa):
+    pedraSelecionado = loadImage("Map/pedraSelecionado.png")
+    jogador.atualizaPosAtual(mapa)
+    if jogador.posAtual[0] + 1 < len(mapa):
+        if mapa[jogador.posAtual[0] + 1][jogador.posAtual[1]] == 0:
+            mapa[jogador.posAtual[0] + 1][jogador.posAtual[1]]
+            carregaImagem(pedraSelecionado, ((jogador.posAtual[0] + 1) * 64, jogador.posAtual[1] * 64))
+    if jogador.posAtual[1] - 1 >= 0:
+        if mapa[jogador.posAtual[0]][jogador.posAtual[1] - 1] == 0:
+            carregaImagem(pedraSelecionado, (jogador.posAtual[0]*64, (jogador.posAtual[1] - 1) * 64))
+            pass
+    if jogador.posAtual[0] - 1 >= 0:
+        if mapa[jogador.posAtual[0] - 1][jogador.posAtual[1]] == 0:
+            carregaImagem(pedraSelecionado, ((jogador.posAtual[0] - 1) * 64, jogador.posAtual[1] * 64))
+            pass
+    if jogador.posAtual[1] + 1 < len(mapa[jogador.posAtual[0]]):
+        if mapa[jogador.posAtual[0]][jogador.posAtual[1] + 1] == 0:
+            carregaImagem(pedraSelecionado, (jogador.posAtual[0]*64, (jogador.posAtual[1] + 1) * 64))
+            pass
+    updateDisplay()
+
+
+    time.sleep(1)
+def printMenuDeslocamento(mapa,jogador):
+    limpaMenu()
+    setad = loadImage('Map/direcionalSeta.png')
+    carregaImagem(setad, (180, 625))
+    updateDisplay()
+    quadradosPossiveis(jogador,mapa)
+    while True:
+        if mousePressed():
+            x = mouseX()
+            y = mouseY()
+            print(x,y)
+            if x > 285 and x < 328 and y > 658 and y < 714:
+                return 1
+            elif x > 218 and x < 280 and y > 722 and y < 766:
+                return 2
+            elif x > 283 and x < 331 and y > 773 and y < 831:
+                return 3
+            elif x > 335 and x < 390 and y > 718 and y < 770:
+                print('rigth')
+                return 4
+
+
+
+def jogada(jogador, listaInimigos: list, mapa):
     while jogador.acoes > 0:
         carregaMapa(mapa)
         updateDisplay()
-        tick(120)
-        print(f'''
-            {jogador.acoes} Ações disponiveis
-            [0] - Passa a vez
-            [1] - descolamento
-            [2] - ataque
-            ''')
-        x = input('')
-        if x == '0':
+        x = printMenuAcoes(MovimentarText,AtaqueText,PassaVezText)
+
+        if x == 0:
             print('Passou a vez')
-            updateDisplay()
-            tick(120)
             break
-        elif x == '1':
-            jogador.desloca(mapa)
+        elif x == 1:
+            mov = printMenuDeslocamento(mapa,jogador)
+            while True:
+                if jogador.desloca(mapa, mov):
+                   break
+                mov = printMenuDeslocamento()
             updateDisplay()
             tick(120)
-        elif x == '2':
-            jogador.atualizaPosAtual(mapa)
-            inimigo: Player
-            for inimigo in listaInimigos:
-                inimigo.atualizaPosAtual(mapa)
-                print(inimigo.nome)
-            x = input('Quem?').lower()
-            for inimigo in listaInimigos:
-                if x == inimigo.nome.lower():
-                    if jogador.ataca(inimigo) != 0:
-                        acaoAtaqueImg(loadImage("Map/corte.png"),inimigo.posAtual)
-                        jogador.acoes -= 1
-                    else:
-                        if inimigo.verificaVivo() == 0:
-                            acaoAtaqueImg(loadImage("Map/corte.png"), inimigo.posAtual)
-                            updateDisplay()
-                            tick(120)
-                            return 0
-            updateDisplay()
-            tick(120)
+        elif x == 2:
+           ataque(jogador,mapa,listaInimigos)
     updateDisplay()
     tick(120)
     jogador.acoes = 4
 
 
 jogador1 = Player('Humano', 'Gabriel', armas['Machado'])
-jogador2 = Monster('Esqueleto',13,13,3,10,16,18,4,7,2,'veneno',50,armas['espadaCurta'])
+jogador2 = Monster('Esqueleto', 13, 13, 3, 10, 16, 18, 4, 7, 2, 'veneno', 50, armas['espadaCurta'])
 print(Map1)
-gameInit([jogador1],[jogador2])
+gameInit([jogador1], [jogador2])
 print(Map1)
+updateDisplay()
+tick(120)
+
 while True:
-    updateDisplay()
-    tick(120)
+
     if jogada(jogador1, [jogador2], Map1) == 0:
         break
     print('Proxima rodada')

@@ -25,29 +25,18 @@ class Monster():
             print(f'{self.nome} morreu!')
         return self.vida
 
-    def desloca(self, mapa: list):
+    def desloca(self, mapa: list, sentido):
         self.atualizaPosAtual(mapa)
-        while True:
-            print('''
-                       ^
-                       |        
-                       8
-                  <--4 0 6-->
-                       2
-                       |
-                       v
-                   ''')
+        if not self.movMap(mapa, sentido):
+            return 0
+        else:
+            self.acoes -= 1
+            return 1
 
-            mov = input('Voce deseja se movimentar para? y x ')
-            if not self.movMap(mapa, mov):
-                print('Jogada errada... Repita')
-            else:
-                self.acoes -= 1
-                print('Andou')
-                break
+
 
     def movMap(self, mapa, mov):
-        if mov == '6':
+        if mov == 4:
             if self.posAtual[0] + 1 < len(mapa):
                 if mapa[self.posAtual[0] + 1][self.posAtual[1]] == 0:
                     mapa[self.posAtual[0]][self.posAtual[1]] = 0
@@ -58,7 +47,7 @@ class Monster():
                     return False
             else:
                 return False
-        elif mov == '8':
+        elif mov == 1:
             if self.posAtual[1] - 1 >= 0:
                 if mapa[self.posAtual[0]][self.posAtual[1] - 1] == 0:
                     mapa[self.posAtual[0]][self.posAtual[1]] = 0
@@ -69,7 +58,7 @@ class Monster():
                     return False
             else:
                 return False
-        elif mov == '4':
+        elif mov == 2:
             if self.posAtual[0] - 1 >= 0:
                 if mapa[self.posAtual[0] - 1][self.posAtual[1]] == 0:
                     mapa[self.posAtual[0]][self.posAtual[1]] = 0
@@ -80,7 +69,7 @@ class Monster():
                     return False
             else:
                 return False
-        elif mov == '2':
+        elif mov == 3:
             if self.posAtual[1] + 1 < len(mapa[self.posAtual[0]]):
                 if mapa[self.posAtual[0]][self.posAtual[1] + 1] == 0:
                     mapa[self.posAtual[0]][self.posAtual[1]] = 0

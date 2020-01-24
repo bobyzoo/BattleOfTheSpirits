@@ -3,3 +3,5 @@ class ModelHumano:
     modificadores = [1,1,1,1,1,1]
 
 
+
+

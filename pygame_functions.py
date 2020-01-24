@@ -672,6 +672,7 @@ def hideTextBox(textBoxName):
         updateDisplay()
 
 
+
 def updateDisplay():
     global background
     spriteRects = spriteGroup.draw(screen)
@@ -752,13 +753,16 @@ def carregaMapa(mapa):
     pedraSelecionado = loadImage("Map/pedraSelecionado.png")
     pedra2 = loadImage("Map/pedra2.png")
     esqueleto = loadImage("Map/inimigo1.png")
-    druida = loadImage("Map/deuida.png")
+    druida = loadImage("Map/jogador.png")
+    bau = loadImage("Map/baus.png")
     for x in range(len(mapa)):
         for y in range(len(mapa[x])):
-            if mapa[x][y] == 0 or type(mapa[x][y]) == Monster.Monster or type(mapa[x][y]) == Player.Player:
+            if mapa[x][y] == 0 or type(mapa[x][y]) == Monster.Monster or type(mapa[x][y]) == Player.Player or mapa[x][y] == 3:
                 carregaImagem(pedra,(x*64,y*64))
             if mapa[x][y] == 1:
                 carregaImagem(pedra2,(x*64,y*64))
+            if mapa[x][y] == 3:
+                carregaImagem(bau,(x*64,y*64))
             if type(mapa[x][y]) == Monster.Monster:
                 carregaImagem(esqueleto,(x*64,y*64))
             if  type(mapa[x][y]) == Player.Player:

@@ -2,7 +2,7 @@ from pygame_functions import *
 from Map.Map import *
 import pygame
 
-screenSize(640, 850)
+screenSize(640, 850,fullscreen=True)
 setAutoUpdate(False)
 
 #
@@ -105,7 +105,7 @@ def ataque(jogador,mapa,listaInimigos):
     tick(120)
 
 def quadradosPossiveis(jogador,mapa):
-    pedraSelecionado = loadImage("Map/pedraSelecionado.png")
+    pedraSelecionado = loadImage("Map/selectRed.png")
     jogador.atualizaPosAtual(mapa)
     if jogador.posAtual[0] + 1 < len(mapa):
         if mapa[jogador.posAtual[0] + 1][jogador.posAtual[1]] == 0:
@@ -127,6 +127,7 @@ def quadradosPossiveis(jogador,mapa):
 
 
     time.sleep(1)
+
 def printMenuDeslocamento(mapa,jogador):
     limpaMenu()
     setad = loadImage('Map/direcionalSeta.png')
@@ -145,10 +146,7 @@ def printMenuDeslocamento(mapa,jogador):
             elif x > 283 and x < 331 and y > 773 and y < 831:
                 return 3
             elif x > 335 and x < 390 and y > 718 and y < 770:
-                print('rigth')
                 return 4
-
-
 
 def jogada(jogador, listaInimigos: list, mapa):
     while jogador.acoes > 0:
@@ -174,23 +172,24 @@ def jogada(jogador, listaInimigos: list, mapa):
     jogador.acoes = 4
 
 
-jogador1 = Player('Humano', 'Gabriel', armas['Machado'])
-jogador2 = Monster('Esqueleto', 13, 13, 3, 10, 16, 18, 4, 7, 2, 'veneno', 50, armas['espadaCurta'])
-print(Map1)
-gameInit([jogador1], [jogador2])
-print(Map1)
-updateDisplay()
-tick(120)
-
-while True:
-
-    if jogada(jogador1, [jogador2], Map1) == 0:
-        break
-    print('Proxima rodada')
-    if jogada(jogador2, [jogador1], Map1) == 0:
-        break
-
+def jogo():
+    jogador1 = Player('Humano', 'Gabriel', armas['Machado'])
+    jogador2 = Monster('Esqueleto', 13, 13, 3, 10, 16, 18, 4, 7, 2, 'veneno', 50, armas['espadaCurta'])
+    print(Map1)
+    gameInit([jogador1], [jogador2])
+    print(Map1)
     updateDisplay()
     tick(120)
 
-endWait()
+    while True:
+
+        if jogada(jogador1, [jogador2], Map1) == 0:
+            break
+        print('Proxima rodada')
+        if jogada(jogador2, [jogador1], Map1) == 0:
+            break
+
+        updateDisplay()
+        tick(120)
+
+    endWait()
